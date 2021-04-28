@@ -43,18 +43,39 @@ public class PostHistoryController {
     }
 
     @RequestMapping(value = "/delete")
-    public String deletePost(@RequestParam("post_text") String deleteText, 
-    				Model model) {
-	   	model.addAttribute("title", "Delete Page");
-	   	String pathToLogFile = env.getProperty("post.log.file");
-	   	PostLogger pl = new PostLogger(pathToLogFile);
-		if (!deleteText.isEmpty())
-		{
-			boolean deleted = pl.deleteString(deleteText);
-			model.addAttribute("deleted", deleted);
-			model.addAttribute("deleteAttempted", true);
-		}
+    public String deletePost(@RequestParam("post_text") String deleteText,
+                             Model model) {
+        model.addAttribute("title", "Delete Page");
+        String pathToLogFile = env.getProperty("post.log.file");
+        PostLogger pl = new PostLogger(pathToLogFile);
+        if (!deleteText.isEmpty())
+        {
+            boolean deleted = pl.deleteString(deleteText);
+            model.addAttribute("deleted", deleted);
+            model.addAttribute("deleteAttempted", true);
+        }
         return "delete";
+    }
+
+    @RequestMapping(value = "/search")
+    public String searchPost(@RequestParam("post_text") String searchText,
+                             Model model) {
+        model.addAttribute("title", "Search Page");
+        String pathToLogFile = env.getProperty("post.log.file");
+        PostLogger pl = new PostLogger(pathToLogFile);
+
+        String history = pl.readHistory();
+
+
+        if (!searchText.isEmpty())
+        {
+            boolean searched = pl.searchString(searchText);
+            model.addAttribute("searched", searched);
+            model.addAttribute("history",history);
+            model.addAttribute("word", searchText);
+            model.addAttribute("searchAttempted", true);
+        }
+        return "search";
     }
 
 }
